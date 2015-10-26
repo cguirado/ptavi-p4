@@ -15,7 +15,10 @@ IP = sys.argv[1]
 PORT = int(sys.argv[2])
 # Contenido que vamos a enviar
 LINE = str(sys.argv[3:])
-print(LINE)
+Mensaje =
+for argumento in LINE
+    print argumento
+
 # Creamos el socket, lo configuramos y lo atamos a un servidor/puerto
 my_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 my_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)

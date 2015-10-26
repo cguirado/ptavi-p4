@@ -17,16 +17,22 @@ class EchoHandler(socketserver.DatagramRequestHandler):
     def handle(self):
         # Escribe dirección y puerto del cliente (de tupla client_address)
         self.wfile.write(b"Hemos recibido tu peticion")
-        print("IP: ",self.client_address[0])#Lo que tiene mi cliente
+        print("IP: ",self.client_address[0])#Lo que tiene mi clnt con self.cl..
         print("Puerto: ", self.client_address[1])
         while 1:
             # Leyendo línea a línea lo que nos envía el cliente
-            line = self.rfile.read()
-            print("El cliente nos manda " + line.decode('utf-8'))
-
-            # Si no hay más líneas salimos del bucle infinito
-            if not line:
+            lineb = self.rfile.read()
+            print("El cliente nos manda " + lineb.decode('utf-8'))
+            line = lineb.decode('utf-8')
+            if not line:  # Si no hay más líneas salimos del bucle infinito
                 break
+            (metodo, direccion, elresto) = line.split()
+            print(metodo, direccion, elresto)
+            if metodo != "REGISTER" or not "@" in direccion:
+                break
+            USER = direccion.split(":")[1]
+            print(USER)
+
 
 if __name__ == "__main__":
     # Creamos servidor de eco y escuchamos

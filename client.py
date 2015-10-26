@@ -13,16 +13,21 @@ SERVER = 'localhost'
 #PORT = 6001
 IP = sys.argv[1]
 PORT = int(sys.argv[2])
-# Contenido que vamos a enviar
-LINE = " ".join(sys.argv[3:])
 
-print (LINE)
+
 # Creamos el socket, lo configuramos y lo atamos a un servidor/puerto
 my_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 my_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 my_socket.connect((SERVER, PORT))
 
-#print("Enviando: " + LINE)
+# Contenido que vamos a enviar
+if sys.argv[3] == "register":
+    USER = " ".join(sys.argv[4:])
+else:
+    sys.exit("Necesito un register")
+
+LINE = ("REGISTER "+"sip:"+USER+" SIP/2.0"+ "\r\n"+"\r\n")
+print("Enviando:", LINE)
 my_socket.send(bytes(LINE, 'utf-8') + b'\r\n')
 data = my_socket.recv(1024)
 

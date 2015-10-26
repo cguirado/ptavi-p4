@@ -15,7 +15,7 @@ class EchoHandler(socketserver.DatagramRequestHandler):
     dicserv ={}
     def handle(self):
         # Escribe dirección y puerto del cliente (de tupla client_address)
-        self.wfile.write(b"Hemos recibido tu peticion")
+        #self.wfile.write(b"Hemos recibido tu peticion")
         IP = self.client_address[0]
         PORT = self.client_address[1]
         print("IP: ", IP)#Lo que tiene mi clnt con self.cl..
@@ -34,6 +34,7 @@ class EchoHandler(socketserver.DatagramRequestHandler):
                 break
             USER = direccion.split(":")[1]
             self.dicserv[USER] = IP
+            self.wfile.write(b"SIP/2.0 200 OK"+b"\r\n"+b"\r\n")
             print (self.dicserv)
 
 if __name__ == "__main__":

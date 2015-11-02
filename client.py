@@ -20,7 +20,7 @@ my_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 my_socket.connect((SERVER, PORT))
 
 # Contenido que vamos a enviar
-if not len(sys.argv) != 5:
+if not  len(sys.argv) != 5:
     sys.exit("Usage: client.py ip puerto register sip_address expires_value")
 if sys.argv[3] == "register":
     USER = " ".join(sys.argv[4:-1])

@@ -23,7 +23,7 @@ class EchoHandler(socketserver.DatagramRequestHandler):
     def json2registered(self):
         try:
             with open("registered.json",'r') as existe:
-                self.dicserv= json.load(existe)
+                self.dicserv = json.load(existe)
         except:
             pass
     def handle(self):
@@ -35,7 +35,7 @@ class EchoHandler(socketserver.DatagramRequestHandler):
         print("Puerto: ",PORT )
         if len(self.dicserv) == 0:
             self.json2registered()
-        print(self.dicserv)
+        #print(self.dicserv)
         while 1:
             # Leyendo línea a línea lo que nos envía el cliente
             lineb = self.rfile.read()
@@ -47,14 +47,24 @@ class EchoHandler(socketserver.DatagramRequestHandler):
             if metodo != "REGISTER" and not "@" in direccion:
                 break
             formato = '%Y-%m-%d %H:%M:%S'
-            tiempo = time.strftime(formato, time.gmtime(int(valor)))
+            valor1 =int(valor) + int(time.time())
+            tiempo = time.strftime(formato, time.gmtime(valor1))
             if int(valor) == 0:
                 del self.dicserv[direccion]
                 #print(self.dicserv)
             else:
                 USER = direccion.split(":")[1]
-                self.dicserv[direccion] = ["IP: " + str(IP),"EXPIRE: "+ tiempo]
+                self.dicserv[direccion] = [str(IP), tiempo]
             self.wfile.write(b"SIP/2.0 200 OK"+b"\r\n"+b"\r\n")
+
+            lista = []
+            print(self.dicserv)
+            for usuario in self.dicserv:
+                nuevo = self.dicserv[usuario][1]
+                if time.strptime(nuevo, formato) <= time.gmtime(time.time()):
+                    lista.append(usuario)
+            for cliente in lista:
+                del self.dicserv[cliente]
             self.register2json()
             print ("AQUI",self.dicserv)
 if __name__ == "__main__":

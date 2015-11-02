@@ -9,33 +9,42 @@ import sys
 import json
 import time
 
+
 class EchoHandler(socketserver.DatagramRequestHandler):
     """
     Echo server class
     """
-    dicserv ={}
+    dicserv = {}
+
     def register2json(self):
-        #fich_json = json.dump(self.dicserv )
+        """
+        Creamos fichero json
+        """
         newfich = "registered.json"
         with open(newfich, 'w') as ficherojson:
             json.dump(self.dicserv, ficherojson)
 
     def json2registered(self):
+        """
+        Si tenemos fichero json lo leemos
+        """
         try:
-            with open("registered.json",'r') as existe:
+            with open("registered.json", 'r') as existe:
                 self.dicserv = json.load(existe)
         except:
             pass
+
     def handle(self):
-        # Escribe dirección y puerto del cliente (de tupla client_address)
-        #self.wfile.write(b"Hemos recibido tu peticion")
+        """
+        Donde  nos llega lo que el cliente nos envia  eliminamos, er
+        """
         IP = self.client_address[0]
         PORT = self.client_address[1]
-        print("IP: ", IP)#Lo que tiene mi clnt con self.cl..
-        print("Puerto: ",PORT )
+        print("IP: ", IP)
+        print("Puerto: ", PORT)
         if len(self.dicserv) == 0:
             self.json2registered()
-        #print(self.dicserv)
+            self.wfile.write(b"SIP/2.0 200 OK"+b"\r\n"+b"\r\n")
         while 1:
             # Leyendo línea a línea lo que nos envía el cliente
             lineb = self.rfile.read()
@@ -47,11 +56,10 @@ class EchoHandler(socketserver.DatagramRequestHandler):
             if metodo != "REGISTER" and not "@" in direccion:
                 break
             formato = '%Y-%m-%d %H:%M:%S'
-            valor1 =int(valor) + int(time.time())
+            valor1 = int(valor) + int(time.time())
             tiempo = time.strftime(formato, time.gmtime(valor1))
             if int(valor) == 0:
                 del self.dicserv[direccion]
-                #print(self.dicserv)
             else:
                 USER = direccion.split(":")[1]
                 self.dicserv[direccion] = [str(IP), tiempo]
@@ -66,7 +74,6 @@ class EchoHandler(socketserver.DatagramRequestHandler):
             for cliente in lista:
                 del self.dicserv[cliente]
             self.register2json()
-            print ("AQUI",self.dicserv)
 if __name__ == "__main__":
     # Creamos servidor de eco y escuchamos
     PORT = int(sys.argv[1])

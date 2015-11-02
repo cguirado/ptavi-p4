@@ -28,15 +28,18 @@ class EchoHandler(socketserver.DatagramRequestHandler):
             line = lineb.decode('utf-8')
             if not line:  # Si no hay más líneas salimos del bucle infinito
                 break
-            (metodo, direccion, elresto) = line.split()
-            print(metodo, direccion, elresto)
+            (metodo, direccion, elresto, expire, valor) = line.split()
             if metodo != "REGISTER" and not "@" in direccion:
                 break
-            USER = direccion.split(":")[1]
-            self.dicserv[USER] = IP
-            self.wfile.write(b"SIP/2.0 200 OK"+b"\r\n"+b"\r\n")
-            print (self.dicserv)
-
+            if int(valor) == 0:
+                del self.dicserv[direccion]
+                self.wfile.write(b"SIP/2.0 200 OK")
+                print(self.dicserv)
+            else:
+                USER = direccion.split(":")[1]
+                self.dicserv[direccion] = [IP ,valor]
+                self.wfile.write(b"SIP/2.0 200 OK"+b"\r\n"+b"\r\n")
+                print (self.dicserv)
 if __name__ == "__main__":
     # Creamos servidor de eco y escuchamos
     PORT = int(sys.argv[1])
